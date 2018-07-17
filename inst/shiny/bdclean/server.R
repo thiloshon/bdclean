@@ -36,11 +36,10 @@ shinyServer(function(input, output, session) {
         ))
     
     # ------------- Next Buttons Navigation Control -------------------
-    observeEvent(input$dataToConfigure, {
-        updateTabItems(session, "sideBar", "configure")
-    })
+    
     
     observeEvent(input$configureToFlag, {
+        print(dim(inputData))
         getResponse <- function(bdQuestion) {
             # set response
             bdQuestion$setResponse(input[[bdQuestion$question.id]])
@@ -65,98 +64,11 @@ shinyServer(function(input, output, session) {
     
     # ------------- End of Side Bar Tab Navigation Control -------------------
     
-    # ------------- Add Data Module -------------------
+    inputData <- callModule(dataInput, "datafile")
     
-    map <- leafletProxy("mymap")
     
-    observeEvent(input$queryDatabase, {
-        withProgress(message = paste("Querying", input$queryDB, "..."), {
-            if (length(input$queryDatabase == 1) &&
-                input$queryDatabase == "gbif") {
-                print("in")
-                data <-
-                    occ_search(input$scientificName, limit = input$recordSize)
-                inputData <<- data$data
-                
-            } else {
-                data <-
-                    spocc::occ(input$scientificName,
-                               input$queryDB,
-                               limit = input$recordSize)
-                inputData <<- data$gbif$data$Puma_concolor
-            }
-        })
-        
-        dataLoadedTask(inputData)
-    })
     
-    observeEvent(input$inputFile, {
-        withProgress(message = paste("Reading", input$inputFile, "..."), {
-            if (is.null(input$inputFile))
-                return("No data to view")
-            
-            inputData <<- read.csv(input$inputFile$datapath)
-        })
-        
-        dataLoadedTask(inputData)
-    })
-    
-    observeEvent(input$mapTexture, {
-        if (length(inputData) == 0) {
-            return(NULL)
-        }
-        leafletProxy("mymap", data = inputData) %>%
-            clearShapes() %>%
-            addCircles( ~ longitude, ~ latitude, color = input$mapColor)
-    })
-    
-    observeEvent(input$mapColor, {
-        if (length(inputData) == 0) {
-            return(NULL)
-        }
-        leafletProxy("mymap", data = inputData) %>%
-            clearShapes() %>%
-            addCircles( ~ longitude, ~ latitude, color = input$mapColor)
-    })
-    
-    dataLoadedTask <- function(data) {
-        leafletProxy("mymap", data = data) %>%
-            clearShapes() %>%
-            addCircles( ~ longitude, ~ latitude, color = input$mapColor)
-        
-        output$inputDataTable <- DT::renderDataTable(DT::datatable({
-            data
-        }, options = list(scrollX = TRUE)))
-        
-        shinyjs::addClass(id = 'queryDatabaseDiv',
-                          class = 'readyButton')
-        shinyjs::removeClass(id = 'queryDatabaseDiv',
-                             class = 'activeButton')
-        
-        shinyjs::addClass(id = 'inputFileDiv',
-                          class = 'readyButton')
-        shinyjs::removeClass(id = 'inputFileDiv',
-                             class = 'activeButton')
-        
-        shinyjs::addClass(id = 'dataToConfigureDiv',
-                          class = 'completedButton')
-        shinyjs::removeClass(id = 'queryDatabaseDiv',
-                             class = 'readyButton')
-        
-        showNotification("Read Data Succesfully", duration = 2)
-        
-        
-        output$inputDataRows <- renderText(nrow(data))
-        output$inputDataColumns <- renderText(length(data))
-        output$inputDataSpecies <-
-            renderText(length(unique(data$scientificName)))
-    }
-    
-    output$mymap <- renderLeaflet({
-        leaflet() %>%
-            addProviderTiles(input$mapTexture) %>%
-            setView(0, 0, zoom = 2)
-    })
+    # ------------- End of Add Data Module -------------------
     
     output$qualityChecks <- renderUI({
         components <- list()
@@ -347,7 +259,7 @@ shinyServer(function(input, output, session) {
         
     })
     
-    # ------------- End of Add Data Module -------------------
+
     
     # ------------- Questionnaire Module -------------------
     
