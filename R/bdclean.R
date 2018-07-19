@@ -10,7 +10,6 @@
 #'
 #'@section Data cleaning:
 #'\itemize{
-#'\item \link{get_config}
 #'\item \link{clean_data}
 #'}
 #'
@@ -22,5 +21,6 @@
 #'
 #' @docType package
 #' @name bdclean
+#' @import DT data.table ggmap leaflet maps parsedate shiny shinydashboard shinyjs
 NULL
 #> NULL

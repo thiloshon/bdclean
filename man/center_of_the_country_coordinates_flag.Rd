@@ -38,11 +38,6 @@ decimalLatitude, decimalLongitude
 spatial
 }
 
-\examples{
-dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-flagged_dat <- center_of_the_country_coordinates_flag(dat$data)
-
-}
 \author{
 thiloshon <thiloshon@gmail.com>
 }

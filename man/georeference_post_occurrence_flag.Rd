@@ -40,11 +40,6 @@ georeferencedDate, eventDate
 temporal
 }
 
-\examples{
-dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-flagged_dat <- georeference_post_occurrence_flag(dat$data)
-
-}
 \author{
 thiloshon <thiloshon@gmail.com>
 }

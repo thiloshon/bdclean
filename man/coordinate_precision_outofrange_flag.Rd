@@ -41,11 +41,6 @@ coordinatePrecision
 spatial
 }
 
-\examples{
-dat <- finch::dwca_read("sources/GBIF Downloaded Files/DwC/0090371-160910150852091.zip", read=TRUE)
-flagged_dat <- coordinate_precision_outofrange_flag(dat$data$occurrence.txt)
-
-}
 \author{
 thiloshon <thiloshon@gmail.com>
 }

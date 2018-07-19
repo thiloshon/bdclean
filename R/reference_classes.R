@@ -1,7 +1,7 @@
 #' The Question Reference Class
 #'
 #' @export BdQuestion
-#' @importFrom tools Rd_db
+#' @importFrom tools Rd_db 
 BdQuestion <-
     setRefClass(
         "BdQuestion",

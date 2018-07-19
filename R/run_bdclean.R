@@ -1,6 +1,5 @@
 #' Launch bdclean Shiny Application
 #'
-#'@import shiny shinydashboard leaflet shinyjs DT
 #'
 #'@export
 run_bdclean <- function(){

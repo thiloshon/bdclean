@@ -23,11 +23,11 @@ occdat1 <- occ_data(
  myData<-occdat1$data
 
  responses <- run_questionnaire()
- cleanedData <- clean_data_new(myData, responses)
+ cleanedData <- clean_data(myData, responses)
 
  customQuestionnaire <- create_default_questionnaire()
  customResponses <- run_questionnaire(customQuestionnaire)
- cleanedData <- clean_data_new(myData, customResponses)
+ cleanedData <- clean_data(myData, customResponses)
 }
 
 }

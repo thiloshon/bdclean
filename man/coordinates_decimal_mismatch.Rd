@@ -40,11 +40,6 @@ decimalLatitude, decimalLongitude
 spatial
 }
 
-\examples{
-dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-flagged_dat <- coordinates_decimal_mismatch(dat$data)
-
-}
 \author{
 thiloshon <thiloshon@gmail.com>
 }

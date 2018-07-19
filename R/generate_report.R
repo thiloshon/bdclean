@@ -131,7 +131,7 @@ create_report_data <-
         # ------------ End of data required for short report ---------------
         
         if (verbose) {
-            print(kable(recordsTable, format = "markdown"))
+            print(recordsTable)
         }
         
         generateShortReport(recordsTable, format)

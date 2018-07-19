@@ -17,7 +17,6 @@ analysis or modelling.
 \section{Data cleaning}{
 
 \itemize{
-\item \link{get_config}
 \item \link{clean_data}
 }
 }

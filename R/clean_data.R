@@ -25,14 +25,14 @@
 #'  )
 #'  myData<-occdat1$data
 #'
-#'  cleanedData <- clean_data_new(myData)
+#'  cleanedData <- clean_data(myData)
 #'
 #'  responses <- run_questionnaire()
 #'  cleanedData <- clean_data(myData, responses)
 #'
 #'  customQuestionnaire <- create_default_questionnaire()
 #'  customResponses <- run_questionnaire(customQuestionnaire)
-#'  cleanedData <- clean_data_new(myData, customResponses)
+#'  cleanedData <- clean_data(myData, customResponses)
 #'  }
 #'
 #'@export

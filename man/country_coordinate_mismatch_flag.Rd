@@ -35,11 +35,6 @@ decimalLatitude, decimalLongitude, country
 spatial
 }
 
-\examples{
-dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-flagged_dat <- country_coordinate_mismatch_flag(dat$data)
-
-}
 \author{
 thiloshon <thiloshon@gmail.com>
 }

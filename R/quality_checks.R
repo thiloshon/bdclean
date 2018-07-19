@@ -155,9 +155,6 @@ temporalResolution <- function(bddata, res = "Day") {
 #' @author thiloshon <thiloshon@@gmail.com>
 #' @param gbif_data Dataframe from GBIF with two mandatory fields; decimalLatitude and decimalLongitude.
 #' @return Same dataframe with two additional columns; latRepeatCount and longRepeatCount. Both shows the number of digits that are repeating
-#' @examples
-#' dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-#' flagged_dat <- repeating_digits(dat$data)
 #' 
 #' @section samplePassData:
 #' lat - 19.5518, long 113.8497.
@@ -202,8 +199,8 @@ repeating_digits <- function(gbif_data) {
                 
                 list = as.vector(strsplit(lat, ""))
                 table <- data.table::as.data.table(list)
-                frameCount <-
-                    table[, count := sequence(.N), by = rleid(V1)][V1 == "No", count := 0][]
+                # frameCount <-
+                #     table[, count := sequence(.N), by = rleid(V1)][V1 == "No", count := 0][]
                 
                 max(frameCount$count)
             } else{
@@ -248,9 +245,6 @@ repeating_digits <- function(gbif_data) {
 #' @author thiloshon <thiloshon@@gmail.com>
 #' @param gbif_data Dataframe from GBIF with two mandatory fields; decimalLatitude, decimalLongitude
 #' @return Same dataframe with one additional column; decimalPointDifference
-#' @examples
-#' dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-#' flagged_dat <- coordinates_decimal_mismatch(dat$data)
 #' 
 #' @section samplePassData:
 #' lat - 19.5518, long 113.8497.
@@ -316,9 +310,6 @@ coordinates_decimal_mismatch <- function(gbif_dataFrame) {
 #' @author thiloshon <thiloshon@@gmail.com>
 #' @param gbif_data Dataframe from GBIF with two mandatory fields; georeferencedDate and eventDate
 #' @return Same dataframe with one additional column; georeferencePostOccurrenceFlag
-#' @examples
-#' dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-#' flagged_dat <- georeference_post_occurrence_flag(dat$data)
 #' 
 #' @section samplePassData:
 #' If the record was georeferenced on the day it was occurred
@@ -367,9 +358,6 @@ georeference_post_occurrence_flag <- function(gbif_data) {
 #' @author thiloshon <thiloshon@@gmail.com>
 #' @param gbif_data Dataframe from GBIF with one mandatory field; coordinatePrecision
 #' @return Same dataframe with one additional column; coordinatePrecisionOutofRangeFlag
-#' @examples
-#' dat <- finch::dwca_read("sources/GBIF Downloaded Files/DwC/0090371-160910150852091.zip", read=TRUE)
-#' flagged_dat <- coordinate_precision_outofrange_flag(dat$data$occurrence.txt)
 #' 
 #' @section samplePassData:
 #' 0 <= coordinatePrecision <= 1
@@ -408,9 +396,6 @@ coordinate_precision_outofrange_flag <- function(gbif_data) {
 #' @author thiloshon <thiloshon@@gmail.com>
 #' @param gbif_data Dataframe from GBIF with two mandatory fields; "decimalLatitude", "decimalLongitude"
 #' @return Same dataframe with one additional column; centerofTheCountryCoordinatesFlag
-#' @examples
-#' dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-#' flagged_dat <- center_of_the_country_coordinates_flag(dat$data)
 #' 
 #' @section samplePassData:
 #' decimalLatitude/decimalLongitude=spatial buffered centre of country
@@ -464,9 +449,6 @@ center_of_the_country_coordinates_flag <- function(gbif_data) {
 #' @author thiloshon <thiloshon@@gmail.com>
 #' @param gbif_data Dataframe from GBIF with two mandatory fields; "decimalLatitude", "decimalLongitude"
 #' @return Same dataframe with two additional columns; countryCoordinateMismatchFlag, generatedCountries
-#' @examples
-#' dat <- rgbif::occ_data(scientificName = 'Ursus americanus')
-#' flagged_dat <- country_coordinate_mismatch_flag(dat$data)
 #' 
 #' @section samplePassData:
 #' doordinates mismatching country
@@ -500,6 +482,39 @@ country_coordinate_mismatch_flag <- function(gbif_data) {
     
     message(paste("Time difference of " , Sys.time() - t, " seconds", sep = ""))
     return(gbif_data)
+}
+
+
+#' Internal function to check validity of input GBIF dataset
+#'
+#' Finds is input object is one of these, dataframe, gbif_data, dwca_gbif. And also checks if
+#' the needed columns are present in the dataset.
+#'
+#' @author thiloshon <thiloshon@@gmail.com>
+#' @param gbif_data Object to check validity.
+#' @param variable_vector Vector containing required filed names.
+#' @return Same object stripped upto dataframe
+format_checking <- function(gbif_data, variable_vector = NULL) {
+    class <- class(gbif_data)[1]
+    if ( class == "dwca_gbif") {
+        gbif_data <- gbif_data$data$occurrence.txt
+    }else if (class == "gbif_data"){
+        gbif_data <- gbif_data$data
+    } else if (class != "data.frame" & class != "tbl_df") {
+        stop(paste("Incorrect input type, input a dataframe. Current type", class, sep = " "))
+    }
+    
+    if (!is.null(variable_vector)) {
+        sapply(variable_vector, function(value) {
+            # print(value %in% colnames(gbif_data))
+            if (!(value %in% colnames(gbif_data))) {
+                stop(paste("Missing column", value, sep = " "))
+            }
+        })
+    }
+    
+    return(gbif_data)
+    
 }
 
 # repeating_digits
