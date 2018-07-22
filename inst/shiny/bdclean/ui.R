@@ -42,118 +42,13 @@ shinyUI(dashboardPage(
             tabItem("add",
                     fluidRow(column(
                         12,
-                        dataInputUI("datafile", "User data (.csv format)")
-                        # h1("Add Occurrence Data"),
-                        # column(
-                        #     3,
-                        #    
-                        #     tabsetPanel(
-                        #         type = "tabs",
-                        #         tabPanel(
-                        #             "Option 01",
-                        #             div(class = "secondaryHeaders", h3("Option 01: From Online Database")),
-                        #             textInput(
-                        #                 "scientificName",
-                        #                 label = h3("Scientific Name:"),
-                        #                 value = "Puma concolor"
-                        #             ),
-                        # 
-                        #             sliderInput(
-                        #                 "recordSize",
-                        #                 label = h3("Record Size:"),
-                        #                 min = 0,
-                        #                 max = 50000,
-                        #                 value = 500
-                        #             ),
-                        #             checkboxGroupInput(
-                        #                 "queryDB",
-                        #                 label = h3("Online Database:"),
-                        #                 choices = list(
-                        #                     "GBIF" = 'gbif',
-                        #                     "Vertnet" = 'vertnet',
-                        #                     "Bison" = 3,
-                        #                     "Inat" = 4,
-                        #                     "eBird" = 5,
-                        #                     "Ecoengine" = 6,
-                        #                     "Vertnet" = 7
-                        #                 ),
-                        #                 selected = 'gbif'
-                        #             ),
-                        #             br(),
-                        #             div(
-                        #                 id = "queryDatabaseDiv",
-                        #                 class = "activeButton",
-                        #                 actionButton("queryDatabase", "Query Database", icon("download"))
-                        #             )
-                        #         ),
-                        #         tabPanel(
-                        #             "Option 02",
-                        #             div(class = "secondaryHeaders", h3("Option 02: From Local Disk")),
-                        #             div(
-                        #                 id = "inputFileDiv",
-                        #                 class = "activeButton",
-                        #                 fileInput(
-                        #                     "inputFile",
-                        #                     label = h3("CSV file input"),
-                        #                     accept = c("text/csv",
-                        #                                "text/comma-separated-values,text/plain",
-                        #                                ".csv")
-                        #                 )
-                        #             )
-                        #         ),
-                        # 
-                        #         div(class = "progressStep", taskItem(
-                        #             value = 15, color = "orange",
-                        #             "Step 1 of 6"
-                        #         ))
-                        # 
-                        #     ),
-                        #     div(
-                        #         id = "dataToConfigureDiv",
-                        #         actionButton("dataToConfigure", "Next: Configure Cleaning")
-                        #     )
-                        #     
-                        # ),
-                        # column(9,
-                        #        tabsetPanel(
-                        #            type = "tabs",
-                        #            tabPanel(
-                        #                "Map View",
-                        #                leafletOutput("mymap", height = "700"),
-                        #                absolutePanel(
-                        #                    top = 60,
-                        #                    right = 20,
-                        #                    selectInput(
-                        #                        "mapTexture",
-                        #                        "Map Texture",
-                        #                        choices = list(
-                        #                            "OpenStreetMap.Mapnik" = "OpenStreetMap.Mapnik",
-                        #                            "OpenStreetMap.BlackAndWhite" = "OpenStreetMap.BlackAndWhite",
-                        #                            "Stamen.Toner" = "Stamen.Toner",
-                        #                            "CartoDB.Positron" = "CartoDB.Positron",
-                        #                            "Esri.NatGeoWorldMap" = "Esri.NatGeoWorldMap",
-                        #                            "Stamen.Watercolor" = "Stamen.Watercolor",
-                        #                            "Stamen.Terrain" = "Stamen.Terrain",
-                        #                            "Esri.WorldImagery" = "Esri.WorldImagery",
-                        #                            "Esri.WorldTerrain" = "Esri.WorldTerrain"
-                        #                        ),
-                        #                        selected = "Stamen.Watercolor"
-                        #                    ),
-                        #                    selectInput(
-                        #                        "mapColor",
-                        #                        "Points Color",
-                        #                        choices = list(
-                        #                            "Red" = 'red',
-                        #                            "Green" = "green",
-                        #                            "Blue" = "blue",
-                        #                            "Black" = "black"
-                        #                        )
-                        #                    )
-                        #                )
-                        #            ),
-                        #            tabPanel("Table View",
-                        #                     DT::dataTableOutput("inputDataTable"))
-                        #        ))
+                        dataInputUI("datafile", "User data (.csv format)"),
+                        div(
+                            id = "dataToConfigureDiv", 
+                            class = "activeButton",
+                            actionButton("dataToConfigure", "Next: Configure Cleaning")
+                        )
+                       
                         
                     ))),
             tabItem("configure",

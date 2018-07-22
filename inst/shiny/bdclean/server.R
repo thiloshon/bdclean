@@ -4,6 +4,7 @@ options(shiny.maxRequestSize = 50 * 1024 ^ 2)
 library(bdclean)
 
 shinyServer(function(input, output, session) {
+    values <- reactiveValues(inputData = data.frame())
     inputData <- data.frame()
     flaggedData <- data.frame()
     cleanedData <- data.frame()
@@ -37,9 +38,26 @@ shinyServer(function(input, output, session) {
     
     # ------------- Next Buttons Navigation Control -------------------
     
+    inputDataReactiveFunction <- callModule(dataInput, "datafile")
+    
+    observeEvent(input$dataToConfigure, {
+        
+        if (length(inputDataReactiveFunction()) == 0){
+            showNotification("Please input dataset first", duration = 2)
+            return()
+        }
+        
+        inputData <- inputDataReactiveFunction()
+        
+        updateTabItems(session, "sideBar", "configure")
+        output$inputDataRows <- renderText(nrow(inputData))
+        output$inputDataColumns <- renderText(length(inputData))
+        output$inputDataSpecies <-
+            renderText(length(unique(inputData$scientificName)))
+    })
+    
     
     observeEvent(input$configureToFlag, {
-        print(dim(inputData))
         getResponse <- function(bdQuestion) {
             # set response
             bdQuestion$setResponse(input[[bdQuestion$question.id]])
@@ -64,10 +82,9 @@ shinyServer(function(input, output, session) {
     
     # ------------- End of Side Bar Tab Navigation Control -------------------
     
-    inputData <- callModule(dataInput, "datafile")
-    
-    
-    
+   
+  
+  
     # ------------- End of Add Data Module -------------------
     
     output$qualityChecks <- renderUI({

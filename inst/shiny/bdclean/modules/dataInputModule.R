@@ -4,10 +4,10 @@ dataInputUI <- function(id, label = "Data Input") {
     ns <- NS(id)
     
     tagList(
+        useShinyjs(),
         h1("Add Occurrence Data"),
         column(
             3,
-
             tabsetPanel(
                 type = "tabs",
                 tabPanel(
@@ -42,7 +42,7 @@ dataInputUI <- function(id, label = "Data Input") {
                     ),
                     br(),
                     div(
-                        id = "queryDatabaseDiv",
+                        id = ns("queryDatabaseDiv"),
                         class = "activeButton",
                         actionButton(ns("queryDatabase"), "Query Database", icon("download"))
                     )
@@ -51,7 +51,7 @@ dataInputUI <- function(id, label = "Data Input") {
                     "Option 02",
                     div(class = "secondaryHeaders", h3("Option 02: From Local Disk")),
                     div(
-                        id = "inputFileDiv",
+                        id = ns("inputFileDiv"),
                         class = "activeButton",
                         fileInput(
                             ns("inputFile"),
@@ -68,10 +68,6 @@ dataInputUI <- function(id, label = "Data Input") {
                     "Step 1 of 6"
                 ))
 
-            ),
-            div(
-                id = "dataToConfigureDiv",
-                actionButton(ns("dataToConfigure"), "Next: Configure Cleaning")
             )
 
         ),
@@ -120,7 +116,7 @@ dataInputUI <- function(id, label = "Data Input") {
 
 dataInput <- function(input, output, session, stringsAsFactors) {
     message("triggered")
-    inputData <- data.frame()
+    inputData <- reactive(data.frame())
     # ------------- Add Data Module -------------------
     
     map <- leafletProxy("mymap")
@@ -133,18 +129,18 @@ dataInput <- function(input, output, session, stringsAsFactors) {
                 print("in")
                 data <-
                     occ_search(input$scientificName, limit = input$recordSize)
-                inputData <<- data$data
+                inputData <<- reactive(data$data)
 
             } else {
                 data <-
                     spocc::occ(input$scientificName,
                                input$queryDB,
                                limit = input$recordSize)
-                inputData <<- data$gbif$data$Puma_concolor
+                inputData <<- reactive(data$gbif$data$Puma_concolor)
             }
         })
 
-        dataLoadedTask(inputData)
+        dataLoadedTask(inputData())
     })
 
     observeEvent(input$inputFile, {
@@ -152,30 +148,33 @@ dataInput <- function(input, output, session, stringsAsFactors) {
             if (is.null(input$inputFile))
                 return("No data to view")
 
-            inputData <<- read.csv(input$inputFile$datapath)
+            inputData <<- reactive(read.csv(input$inputFile$datapath))
         })
 
-        dataLoadedTask(inputData)
+        dataLoadedTask(inputData())
     })
 
     observeEvent(input$mapTexture, {
-        if (length(inputData) == 0) {
+        if (length(inputData()) == 0) {
             return(NULL)
         }
-        leafletProxy("mymap", data = inputData) %>%
+        leafletProxy("mymap", data = inputData()) %>%
             clearShapes() %>%
             addCircles( ~ longitude, ~ latitude, color = input$mapColor)
     })
 
     observeEvent(input$mapColor, {
-        if (length(inputData) == 0) {
+        if (length(inputData()) == 0) {
             return(NULL)
         }
-        leafletProxy("mymap", data = inputData) %>%
+        leafletProxy("mymap", data = inputData()) %>%
             clearShapes() %>%
             addCircles( ~ longitude, ~ latitude, color = input$mapColor)
     })
 
+    
+    
+    
     dataLoadedTask <- function(data) {
         leafletProxy("mymap", data = data) %>%
             clearShapes() %>%
@@ -214,19 +213,13 @@ dataInput <- function(input, output, session, stringsAsFactors) {
                           class = 'readyButton')
         shinyjs::removeClass(id = 'inputFileDiv',
                              class = 'activeButton')
-
-        shinyjs::addClass(id = 'dataToConfigureDiv',
-                          class = 'completedButton')
-        shinyjs::removeClass(id = 'queryDatabaseDiv',
-                             class = 'readyButton')
+        
+        # shinyjs::addClass(id = 'dataToConfigureDiv',
+        #                   class = 'completedButton')
+        # shinyjs::removeClass(id = 'queryDatabaseDiv',
+        #                      class = 'readyButton')
 
         showNotification("Read Data Succesfully", duration = 2)
-
-
-        output$inputDataRows <- renderText(nrow(data))
-        output$inputDataColumns <- renderText(length(data))
-        output$inputDataSpecies <-
-            renderText(length(unique(data$scientificName)))
     }
 
     output$mymap <- renderLeaflet({
@@ -235,11 +228,10 @@ dataInput <- function(input, output, session, stringsAsFactors) {
             setView(0, 0, zoom = 2)
     })
     
-    observeEvent(input$dataToConfigure, {
-        updateTabItems(session, "sideBar", "configure")
-    })
-    
     # ------------- End of Add Data Module -------------------
     # Return the reactive that yields the data frame
+    
+    
+    
     return(inputData)
 }
